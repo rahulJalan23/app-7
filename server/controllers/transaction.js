@@ -23,10 +23,11 @@ async function addKeys(myArray, document) {
     await document.save();
   });
 }
+const myPath = `uploads/${req.file.filename}`;
 const addTransactionFile = [
   upload.single('csvfile'),
   async (req, res) => {
-    console.log(req.file.filename);
+    console.log(req.file);
     const transactionTable = await new TransactionTable({
       user: req.user._id,
       transaction: [],
@@ -65,9 +66,9 @@ const addTransactionFile = [
         });
       });
 
-    // setTimeout(() => {
-    //   console.log(transactionList.length);
-    // }, 5000);
+    setTimeout(() => {
+      fs.unlinkSync(myPath);
+    }, 20000);
   },
 ];
 
@@ -128,9 +129,7 @@ const validateTransaction = async (req, res) => {
   });
   res.send({ message: 'Records Saved.' });
 
-  const transactionTable = await TransactionTable.findById(
-    req.body.transactionTableId
-  );
+  const transactionTable = await TransactionTable.findById(req.params.id);
   transactionTable.status = 1;
   transactionTable.totalApproved = totalApproved;
   transactionTable.totalTransaction = totalTransaction;
